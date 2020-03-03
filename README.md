@@ -10,4 +10,4 @@ Each language sample will require a different environment. No additional depende
 OCaml
 Java
 Prolog
-Sceme
+Scheme
