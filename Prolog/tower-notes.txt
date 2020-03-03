@@ -1,0 +1,62 @@
+Assignment 4, Tower Puzzle in Prolog
+
+This assignment consisted of writing a predicate tower which finds solutions for the towers puzzle given the
+size of the tower grid. The predicate can be given the Grid and the constraints as logical variables and it
+will generate solutions, or it can be given a List of constraints to generate a grid and viceversa. This 
+tower predicaet uses GNU Prolog's finite-domain solver. This is an optimized library of predicates which
+generate a set of solutions given some logical constraints. In this case, we can set constraints such as 
+length of a list, uniqueness of a list, and most importantly a range of values for the elements of a list.
+These constraints are then set by calling the fd_labeling predicate. This approach generates a fairly fast
+solution to the puzzle.
+
+Another part of the assignment was to replicate the implementation of the tower predicate mentioned above
+without the use of the finite_domain solver. This solution is simple as it allows to set the constraints by
+calling somewhat simple predicates. The main challenge with this solution is making it efficient. One can
+quickly find that plain_tower is much slower than tower, and as the size of the desired grid grows, the
+algorithm becomes very impractical.
+
+In order to find a solution for both predicates, I wrote a predicate viewtowers which iterates over a row 
+and keeps track of the max height visited and the count of towers "Visible" from a given constraint. At each
+step, we check if the constraint fails, in order to backtrack faster. This predicate can be used easily for
+the entire grid by first iterating over the grid's rows, and calling the viewtowers predicate with the 
+row, and the reverse of the row. In order to check the columns, we use a transpose of the main grid, and
+simply call the sam predicate, in the same manner.
+
+
+The third part of the assignment consisted of measuring the speed difference between  both approaches as a
+ratio, using the statistics built-in predicate. In my case, the speedup ranged over the following floating
+point values:
+5.35 <= speed of plain / speed of fd <= 5.41
+
+The predicates used to produce this results are:
+	tower(5, _, counts([1,2,3,2,4],[5,2,1,2,2],[1,2,2,3,3],[5,2,2,1,3]))
+	plain_tower(5, _, counts([1,2,3,2,4],[5,2,1,2,2],[1,2,2,3,3],[5,2,2,1,3]))
+
+
+The different results were likely due to me using the real time option for statistics predicate, in this 
+case, the load of the server (lnxsrv06) likely affected the results.
+
+Finally, I wrote a predicate, ambiguous/4, which finds a constraint puzzle resulting in two different grid 
+solutions. One of the solutions found by calling ambiguous(5,C,T1,T2) is as follows:
+
+C = Counts(
+	[4,2,3,2,1],
+	[1,3,2,3,2],
+	[5,3,2,3,1],
+	[1,2,3,2,2])
+
+T1 = [
+	[1,2,3,4,5],
+	[2,1,4,5,3],
+	[4,5,2,3,1],
+	[3,4,5,1,2],
+	[5,3,1,2,4]]
+
+T2 = [
+	[1,2,3,4,5],
+	[3,1,4,5,2],
+	[4,5,2,3,1],
+	[2,4,5,1,3],
+	[5,3,1,2,4]]
+
+We immediately notice both solutions are very similar to each other.

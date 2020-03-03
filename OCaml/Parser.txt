@@ -1,0 +1,40 @@
+Problem 1. This warmup consists of converting a grammar from hw1 style, to hw 2 style. 
+To solve this problem, I utilize a helper function which takes any given rule 
+of the form (nonterminal, List of symbols) and simply outputs
+the list of symbols. The conversion is then done by utlizing Ocaml's list module to apply 
+the previous helper function to all nonterminals in a filtered grammar. 
+
+Problem 2. This simple problem recursively traverses a tree, returning lists of terminals as map function
+this list is then concatanated to generate the final parsing of the tree leaves 
+
+
+Problem 3. This problem consists of building a matcher for a given grammar which returns a function which takes as input two arguments 
+acceptor and frag. The fragment is a given list of terminal symbols that we want to match. and the acceptor is a function which 
+takes as input a fragment and contains some logic as to whether a fragment is valid match.
+
+The approach used for this problem was that of mutual recursion. I use special matcher function for nonterminal symbols which calls   
+a rule matcher function to try to match the symbols inside the rule of the given nonterminal. Likewise, the rule_matcher function 
+iterates over the given list of symbols and for every nonterminal encountered, calls the previous nonterminal matcher, and when it 
+encounters a terminal, it simply tries to match to the next available symbol from the fragment.
+
+It is clear to see that a special approach is needed to prevent the algorithm from committing to a terminal match that will end up 
+not producing an acceptable overall match. To solve this, I make use of currying and partial functions. When the rule matcher encounters a 
+nonterminal I apply a partial function on the rest of the rule and feed this as an acceptor argument of the appropriate nonterminal matcher
+call. This way, when a terminal is encountered, the match will be done as a curried function, with right most symbol match cascading
+the result of the overall match. A very clear weakness with this approach is that of failing to match left-recursive grammars, as it will 
+end up in a loop. 
+
+
+Problem 4. Given that a parser has plenty of similarities with a matcher (e.g a parser is a matcher with 
+an empty_suffix acceptor) I decided to simply modify the algorithm used for the matcher and make it into a parser.
+The biggest problem with this approach was that of building the tree as the matching was taking place. Many failed 
+attempts resulted from trying to adapt an acceptor function to return tree nodes as it was being curryied through the function.
+
+After several failed attempts, the approach I decided to pursue was one in which minimal changes are done to the matcher to instead provide a 
+List of tuples (int, ParseTree), representing the path taken by the parser. To do this I modified an acceptor function 
+to take as input a tuple of fragment and list, and likewise give this as output to allow for currying the function throughout.
+
+As a second step with this approach, I built a function which recursively iterates over the reversed path found by the pathfinder,
+and attempts to insert each tree into the appropriate parent node.
+
+Given that this parser utilizes the same basic logic as the matcher, the same weakness of not hadling left-recursive grammars exists.  

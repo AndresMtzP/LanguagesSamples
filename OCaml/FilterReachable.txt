@@ -1,0 +1,15 @@
+Assignment 1, CS 131 Winter20
+
+Prob 1, subset: To solve this problem, I used Ocaml's List module, specifically, the module's 'for_all' and 'exists' functions. Using these two functions, I determine a set 'a' to be a subset of 'b' if for all values in 'a', there is at least one ocurrance of the same value in 'b'.
+
+Prob 2, equals_set: To solve this problem, I made use of the previous function 'subset'. Tqo given set 'a' and 'b' are equal if 'a' is a subset of 'b', and 'b' is a subset of 'a'
+
+Prob 3, set_union: This problem was solved by using the function in problems 4 and 5. The union of two sets is given by concatenating three sets, the difference of 'a' - 'b', the intersection of 'a' and 'b', and the difference of 'b' - 'a'. This method was used for simplicity   
+
+Prob 4, set_intersection: To get the intersection of two sets, I used the filter function of the List module to get a list with only those elements present in both sets.
+
+Prob 5, set_diff: This problem also uses the filter function, but to get a list of elements present in one set but not in the other.
+
+Prob 6, computed_fixed_point: This function calls the input function recursively until the output of the given input function meets the input predicate with respect to the previous call's output. This function does nothing to prevent infinite recursion by design. If no fixed point exists, the function will eventually throw a stack overflow error. 
+
+Prob 7, filter_reachable: This problem uses two helper functions. One determines if a (nonterminal, ruleset) tuple is reachable within a given grammar. Another one which performs the filtering of the input grammar based on the 'reachable' predicate. This second function can miss some unreachable rules on first pass if there is usage of said rule by another unreachable rule. In order to filter out all unreachable rules, I used the computed_fixed_point funtion with the filter function until the output grammar no longer changes.
